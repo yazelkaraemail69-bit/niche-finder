@@ -450,18 +450,22 @@ function ProductCard({
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-3 gap-2 mt-3">
+        <div className="grid grid-cols-4 gap-2 mt-3">
           <div className="bg-green-50 rounded-lg p-2 text-center">
-            <p className={`text-lg font-bold ${profitLabel.color}`}>%{product.profitMargin}</p>
+            <p className={`text-base font-bold ${profitLabel.color}`}>%{product.profitMargin}</p>
             <p className="text-[10px] text-slate-500">Kâr Marjı</p>
           </div>
           <div className="bg-blue-50 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-blue-600">{product.nicheScore}</p>
+            <p className="text-base font-bold text-blue-600">{product.nicheScore}</p>
             <p className="text-[10px] text-slate-500">Niş Puanı</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-purple-600">{product.competitorCount}</p>
+            <p className="text-base font-bold text-purple-600">{product.competitorCount}</p>
             <p className="text-[10px] text-slate-500">Rakip</p>
+          </div>
+          <div className="bg-orange-50 rounded-lg p-2 text-center">
+            <p className="text-base font-bold text-orange-600">{product.trendScore}</p>
+            <p className="text-[10px] text-slate-500">Trend Gücü</p>
           </div>
         </div>
 
@@ -537,6 +541,21 @@ function ProductCard({
           <p className="text-[10px] text-slate-400">
             📍 Kaynak: {product.source} | Trend: {product.trend === 'rising' ? '📈 Yükselen' : product.trend === 'stable' ? '📊 Dengeli' : '📉 Düşen'} | Zorluk: {product.difficulty === 'easy' ? '😊 Kolay' : product.difficulty === 'medium' ? '🤔 Orta' : '😰 Zor'}
           </p>
+
+          {/* Google Trends Link */}
+          <a
+            href={product.googleTrendsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-red-50 to-amber-50 hover:from-red-100 hover:to-amber-100 border border-red-200 text-red-700 rounded-xl text-xs font-semibold transition-all"
+          >
+            <span>📈</span>
+            Google Trends'te Bu Ürünü İncele
+            <span className="text-[10px] bg-white/70 px-1.5 py-0.5 rounded-full text-red-600">
+              TR
+            </span>
+          </a>
         </div>
       )}
     </div>

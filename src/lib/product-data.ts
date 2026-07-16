@@ -3,10 +3,45 @@
 // Fiyatlar TL cinsindendir, arama hacimleri Türkiye için tahminidir.
 // niş puanı `calculateNicheScore` fonksiyonu ile otomatik hesaplanır.
 
-import { NicheProduct } from './types';
+import { NicheProduct, RawNicheProduct } from './types';
 import { calculateNicheScore } from './niche-algorithm';
 
-const rawProducts: Omit<NicheProduct, 'nicheScore'>[] = [
+/**
+ * Ürün adından Google Trends arama URL'si oluşturur
+ * Türkiye pazarı ve son 12 ay için optimize edilmiştir
+ */
+function buildGoogleTrendsUrl(query: string): string {
+  const encoded = encodeURIComponent(query);
+  return `https://trends.google.com/trends/explore?geo=TR&q=${encoded}`;
+}
+
+/**
+ * Trend gücü puanı hesaplar (0-100)
+ * - rising + yüksek arama hacmi = yüksek puan
+ * - stable = orta puan
+ * - falling = düşük puan
+ */
+function calculateTrendScore(
+  trend: RawNicheProduct['trend'],
+  monthlySearchVolume: number
+): number {
+  let baseScore: number;
+  if (trend === 'rising') baseScore = 70;
+  else if (trend === 'stable') baseScore = 50;
+  else baseScore = 30;
+
+  // Arama hacmine göre 0-30 puan ekle
+  let volumeBonus: number;
+  if (monthlySearchVolume >= 10000) volumeBonus = 30;
+  else if (monthlySearchVolume >= 5000) volumeBonus = 22;
+  else if (monthlySearchVolume >= 3000) volumeBonus = 15;
+  else if (monthlySearchVolume >= 1000) volumeBonus = 8;
+  else volumeBonus = 3;
+
+  return Math.min(100, baseScore + volumeBonus);
+}
+
+const rawProducts: RawNicheProduct[] = [
   // ============ EV & YAŞAM ============
   {
     id: 'ev-001',
@@ -2489,7 +2524,7 @@ const rawProducts: Omit<NicheProduct, 'nicheScore'>[] = [
   },
 ];
 
-// Her ürün için niş puanını hesapla
+// Her ürün için niş puanını, Google Trends URL'sini ve trend puanını hesapla
 export const nicheProducts: NicheProduct[] = rawProducts.map((product) => ({
   ...product,
   nicheScore: calculateNicheScore({
@@ -2500,6 +2535,8 @@ export const nicheProducts: NicheProduct[] = rawProducts.map((product) => ({
     seasonality: product.seasonality,
     difficulty: product.difficulty,
   }),
+  googleTrendsUrl: buildGoogleTrendsUrl(product.name),
+  trendScore: calculateTrendScore(product.trend, product.monthlySearchVolume),
 }));
 
 // Varsayılan olarak niş puanına göre sırala (yüksekten düşüğe)

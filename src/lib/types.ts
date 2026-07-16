@@ -19,6 +19,28 @@ export interface NicheProduct {
   tags: string[];
   description: string;
   supplierTip: string;     // tedarikçi önerisi
+  googleTrendsUrl: string; // Google Trends arama linki
+  trendScore: number;      // 0-100 arası trend gücü
+}
+
+export interface RawNicheProduct {
+  id: string;
+  name: string;
+  category: string;
+  subCategory: string;
+  costPrice: number;
+  sellPrice: number;
+  profitMargin: number;
+  competitorCount: number;
+  monthlySearchVolume: number;
+  trend: 'rising' | 'stable' | 'falling';
+  seasonality: 'none' | 'summer' | 'winter' | 'holiday' | 'back-to-school';
+  difficulty: 'easy' | 'medium' | 'hard';
+  source: string;
+  sourceUrl?: string;
+  tags: string[];
+  description: string;
+  supplierTip: string;
 }
 
 export interface SearchFilters {
